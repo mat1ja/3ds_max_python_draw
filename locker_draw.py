@@ -1,10 +1,12 @@
 import sys 
 import pymxs
 from pymxs import runtime as rt
+import qtmax
 
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets 
+
 
 class my_box:	
     chamfer = False
@@ -525,7 +527,7 @@ class PyMaxDockWidget(QtWidgets.QDockWidget):
 		parameters = self.locker.get_parameters_for_layout()
 		parameters_return = []
 		for item in parameters:
-			lineEdit = self.findChild(QLineEdit, item[0]).text()
+			lineEdit = self.findChild(QtWidgets.QLineEdit, item[0]).text()
 			parameters_return.append([item[0], lineEdit])
 			
 		self.locker.set_parameters_from_layout(parameters_return)
