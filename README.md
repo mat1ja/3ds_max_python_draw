@@ -1,14 +1,22 @@
 # 3ds Max furniture modeling
 Currently, it is possible to draw two furniture models with just one click. The models are shown in the images below.
 
+## UI screenshots
+
+I also added the possibility to create furniture through a UI interface.
+
+![User interface 1](/screenshot/ui_1.jpg)
+![User interface 1](/screenshot/ui_2.jpg)
+![User interface 1](/screenshot/ui_3.jpg)
+
 ## Furniture type 1
 
 ```
 locker = locker_type_1()
-locker.set_dimensions(150,20,150)
+locker.set_dimensions(80,50,150)
 locker.set_thickness(3.6)
-locker.set_sokl_height(5)
-locker.set_number_of_doors(3)
+locker.set_plinth_height(5)
+locker.set_number_of_doors(2)
 locker.set_mapping(150,150,150)
 locker.draw()
 ```
@@ -19,7 +27,7 @@ locker.draw()
 ## Furniture open shelf
 
 ```
-locker = open_shelv()
+locker = open_shelf()
 locker.set_dimensions(50,30,80)
 locker.set_thickness(3.6)
 locker.set_mapping(150,150,150)
