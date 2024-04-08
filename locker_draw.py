@@ -7,7 +7,6 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets 
 
-
 class my_box:	
     chamfer = False
     length_up_gerung_orientation = 0
@@ -177,139 +176,146 @@ class my_box:
         return box
 
 class open_shelf:
-	width = 50
-	length = 100
-	height = 110
-	thickness = 3.6
-	thickness_back = 1.8
+    width = 50
+    length = 100
+    height = 110
+    thickness = 3.6
+    thickness_back = 1.8
 
-	bocnica_ljeva_obj = my_box()
-	bocnica_desna_obj = my_box()
-	strop_obj = my_box()
-	pod_obj = my_box()
-	ledja_obj = my_box()
-	mapping = [250,250,250]
-	layout_name = "Open shelf"
+    bocnica_ljeva_obj = my_box()
+    bocnica_desna_obj = my_box()
+    strop_obj = my_box()
+    pod_obj = my_box()
+    ledja_obj = my_box()
+    mapping = [250,250,250]
+    layout_name = "Open shelf"
+    chamfer = True
+
+    def getLayoutName(self):
+        return self.layout_name
 	
-	def getLayoutName(self):
-		return self.layout_name
-	
-	def get_parameters_for_layout(self):
-		return [
-		["width", "number", "Width:"],
-		["length", "number", "Length:"],
-		["height", "number", "Height:"],
-		["thickness", "number", "Border thickness:"]
-		]
+    def get_parameters_for_layout(self):
+        return [
+        ["width", "number", "Width:", "main", "", ""],
+        ["length", "number", "Length:", "main", "", ""],
+        ["height", "number", "Height:", "main", "", ""],
+        ["thickness", "number", "Border thickness:", "main", "", ""],
+        ["chamfer", "checkbox", "Add chamfer", "other", "Other", self.chamfer],
+        ["uvw_length", "number", "Length:", "uvw", "UVW map", self.mapping[0]],
+        ["uvw_width", "number", "Width:", "uvw", "UVW map", self.mapping[1]],
+        ["uvw_height", "number", "Height:", "uvw", "UVW map", self.mapping[2]]
+        ]
 
-	def set_parameters_from_layout(self, parameters):
-		self.width = float(parameters[0][1])
-		self.length = float(parameters[1][1])
-		self.height = float(parameters[2][1])
-		self.thickness = float(parameters[3][1])
+    def set_parameters_from_layout(self, parameters):
+        self.width = float(parameters[0][1])
+        self.length = float(parameters[1][1])
+        self.height = float(parameters[2][1])
+        self.thickness = float(parameters[3][1])
+        self.chamfer = parameters[4][1]
+        self.mapping = [float(parameters[5][1]), float(parameters[6][1]), float(parameters[7][1])]
 
-	def set_mapping(self, x,y,z):
-		self.mapping = [x,y,z]
+    def set_mapping(self, x,y,z):
+        self.mapping = [x,y,z]
 
-	def set_dimensions(self,length, width, height):
-		self.width = width
-		self.length = length
-		self.height = height
+    def set_dimensions(self,length, width, height):
+        self.width = width
+        self.length = length
+        self.height = height
         
-	def set_thickness(self, thickness):
-		self.thickness = thickness
+    def set_thickness(self, thickness):
+        self.thickness = thickness
 
-	def draw(self):
-		self.bocnica_ljeva()
-		self.bocnica_desna()  
-		self.strop()
-		self.pod()
-		self.ledja()
-		
-	def bocnica_ljeva(self):
-		object = self.bocnica_ljeva_obj
-		object.set_orientation_left()
-		object.add_chamfer(True)
-		object.length_gerung(-1,-1)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		x = - self.length / 2 + self.thickness / 2
-		y = 0
-		z = self.height / 2
-		
-		object.set_position(x,y,z)
-		
-		object.make_box(self.height, self.width, self.thickness)
+    def draw(self):
+        self.bocnica_ljeva()
+        self.bocnica_desna()  
+        self.strop()
+        self.pod()
+        self.ledja()
         
-	def bocnica_desna(self):
-		object = self.bocnica_desna_obj
-		object.set_orientation_left()
-		object.add_chamfer(True)
-		object.length_gerung(1,1)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+    def bocnica_ljeva(self):
+        object = self.bocnica_ljeva_obj
+        object.set_orientation_left()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(-1,-1)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        
+        x = - self.length / 2 + self.thickness / 2
+        y = 0
+        z = self.height / 2
+        
+        object.set_position(x,y,z)
+        
+        object.make_box(self.height, self.width, self.thickness)
+        
+    def bocnica_desna(self):
+        object = self.bocnica_desna_obj
+        object.set_orientation_left()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(1,1)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
 
-		x = self.length / 2 - self.thickness / 2
-		y = 0
-		z = self.height / 2
+        x = self.length / 2 - self.thickness / 2
+        y = 0
+        z = self.height / 2
 
-		object.set_position(x,y,z)
-		object.make_box(self.height, self.width, self.thickness)
+        object.set_position(x,y,z)
+        object.make_box(self.height, self.width, self.thickness)
       
     
-	def ledja(self):
-		object = self.ledja_obj
-		object.add_chamfer(False)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		height = self.height - 2*self.thickness
-		width = self.length - 2 * self.thickness
-		
-		if height >= width:
-			object.set_orientation_back()
-			z = height / 2 + self.thickness
-		else:
-			object.set_orientation_back(True)
-			tmp = height
-			height = width
-			width = tmp
-			z = width / 2 + self.thickness
-			
-		x = 0
-		
-		y = self.width / 2 - self.thickness_back /2        
-		object.set_position(x,y,z)
-		
-		object.make_box(height, width, self.thickness_back)
-
-	def strop(self):
-		object = self.strop_obj
-		object.set_orientation_top()
-		object.add_chamfer(True)
-		object.length_gerung(-1,-1)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		x = 0
-		y = 0
-		z = self.height - self.thickness / 2
-		
-		object.set_position(x,0,z)
-		
-		object.make_box(self.length, self.width, self.thickness)
+    def ledja(self):
+        object = self.ledja_obj
+        object.add_chamfer(False)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
         
-	def pod(self):
-		object = self.pod_obj
-		object.set_orientation_top()
-		object.add_chamfer(True)
-		object.length_gerung(1,1)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		x = 0
-		y = 0
-		z = self.thickness / 2
-		
-		object.set_position(x,0,z)
-		
-		object.make_box(self.length, self.width, self.thickness)
+        height = self.height - 2*self.thickness
+        width = self.length - 2 * self.thickness
+        
+        if height >= width:
+            object.set_orientation_back()
+            z = height / 2 + self.thickness
+        else:
+            object.set_orientation_back(True)
+            tmp = height
+            height = width
+            width = tmp
+            z = width / 2 + self.thickness
+            
+        x = 0
+        
+        y = self.width / 2 - self.thickness_back /2        
+        object.set_position(x,y,z)
+        
+        object.make_box(height, width, self.thickness_back)
+
+    def strop(self):
+        object = self.strop_obj
+        object.set_orientation_top()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(-1,-1)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        
+        x = 0
+        y = 0
+        z = self.height - self.thickness / 2
+        
+        object.set_position(x,0,z)
+        
+        object.make_box(self.length, self.width, self.thickness)
+        
+    def pod(self):
+        object = self.pod_obj
+        object.set_orientation_top()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(1,1)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        
+        x = 0
+        y = 0
+        z = self.thickness / 2
+        
+        object.set_position(x,0,z)
+        
+        object.make_box(self.length, self.width, self.thickness)
     
     
 
@@ -317,251 +323,306 @@ class open_shelf:
 
 
 class furniture_type_1:
-	width = 50
-	length = 100
-	height = 110
-	plinth_height = 3
-	thickness = 1.8
-	thickness_border = 3.6
-	number_of_doors = 4
-	mapping = [250,250,250]
+    width = 50
+    length = 100
+    height = 110
+    plinth_height = 3
+    thickness = 1.8
+    thickness_border = 3.6
+    number_of_doors = 4
+    mapping = [250,250,250]
 
-	bocnica_ljeva_obj = my_box()
-	bocnica_desna_obj = my_box()
-	strop_obj = my_box()
-	plinth_obj = my_box()
-	ledja_obj = my_box()
-	vrata_obj = my_box()
-	pod_obj = my_box()
-	layout_name = "Furniture type 1"
+    bocnica_ljeva_obj = my_box()
+    bocnica_desna_obj = my_box()
+    strop_obj = my_box()
+    plinth_obj = my_box()
+    ledja_obj = my_box()
+    vrata_obj = my_box()
+    pod_obj = my_box()
+    layout_name = "Furniture type 1"
+    chamfer = True
+
+    def getLayoutName(self):
+        return self.layout_name
 	
-	def getLayoutName(self):
-		return self.layout_name
-	
-	def get_parameters_for_layout(self):
-		return [
-		["width", "number", "Width:"],
-		["length", "number", "Length:"],
-		["height", "number", "Height:"],
-		["thickness", "number", "Border thickness:"],
-		["number_of_doors", "number", "Number of doors:"],
-		["plinth_height", "number", "Plinth height:"]
-		]
+    def get_parameters_for_layout(self):
+        return [
+        ["width", "number", "Width:", "main", "", ""],
+        ["length", "number", "Length:", "main", "", ""],
+        ["height", "number", "Height:", "main", "", ""],
+        ["thickness", "number", "Border thickness:", "main", "", ""],
+        ["plinth_height", "number", "Plinth height:", "main", "", ""],
+        ["number_of_doors", "number", "Number of doors:", "main", "", ""],
+        ["chamfer", "checkbox", "Add chamfer", "other", "Other", self.chamfer],
+        ["uvw_length", "number", "Length:", "uvw", "UVW map", self.mapping[0]],
+        ["uvw_width", "number", "Width:", "uvw", "UVW map", self.mapping[1]],
+        ["uvw_height", "number", "Height:", "uvw", "UVW map", self.mapping[2]]
+        ]
 
-	def set_parameters_from_layout(self, parameters):
-		self.width = float(parameters[0][1])
-		self.length = float(parameters[1][1])
-		self.height = float(parameters[2][1])
-		self.thickness = float(parameters[3][1])
-		self.number_of_doors = int(parameters[4][1])
-		self.plinth_height = float(parameters[5][1])
+    def set_parameters_from_layout(self, parameters):
+        self.width = float(parameters[0][1])
+        self.length = float(parameters[1][1])
+        self.height = float(parameters[2][1])
+        self.thickness = float(parameters[3][1])
+        self.plinth_height = float(parameters[4][1])
+        self.number_of_doors = int(parameters[5][1])
+        self.chamfer = parameters[6][1]
+        self.mapping = [float(parameters[7][1]), float(parameters[8][1]), float(parameters[9][1])]
 
-	def set_mapping(self, x,y,z):
-		self.mapping = [x,y,z]
+    def set_mapping(self, x,y,z):
+        self.mapping = [x,y,z]
 		
-	def set_thickness(self, value):
-		self.thickness_border = value
-		
-	def set_plinth_height(self, value):
-		self.plinth_height = value
-		
-	def set_number_of_doors(self, value):
-		self.number_of_doors = value
+    def set_thickness(self, value):
+        self.thickness_border = value
+        
+    def set_plinth_height(self, value):
+        self.plinth_height = value
+        
+    def set_number_of_doors(self, value):
+        self.number_of_doors = value
 
-	def set_dimensions(self,length, width, height):
-		self.width = width
-		self.length = length
-		self.height = height
+    def set_dimensions(self,length, width, height):
+        self.width = width
+        self.length = length
+        self.height = height
 
-	def draw(self):
-		self.bocnica_ljeva()
-		self.bocnica_desna()
-		self.strop()
-		self.plinth()
-		self.ledja()
-		self.pod()
-		
-		for x in range(self.number_of_doors):
-			self.vrata(x)
+    def draw(self):
+        self.bocnica_ljeva()
+        self.bocnica_desna()
+        self.strop()
+        self.plinth()
+        self.ledja()
+        self.pod()
+        
+        for x in range(self.number_of_doors):
+            self.vrata(x)
 
-	def pod(self):
-		object = self.pod_obj 
-		object.add_chamfer(True)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+    def pod(self):
+        object = self.pod_obj 
+        object.add_chamfer(self.chamfer)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
 
-		object.set_position(0,0.1,self.plinth_height + self.thickness / 2)
-		object.make_box(self.length - 2 * self.thickness_border, self.width-2*self.thickness - 0.2, self.thickness)
+        object.set_position(0,0.1,self.plinth_height + self.thickness / 2)
+        object.make_box(self.length - 2 * self.thickness_border, self.width-2*self.thickness - 0.2, self.thickness)
 
-	def vrata(self,i):
-		object = self.vrata_obj
-		number_of_gaps = self.number_of_doors - 1 + 2
-		length = (self.length - 2 * self.thickness_border - number_of_gaps * 0.3) / self.number_of_doors
-		height = self.height - self.plinth_height - self.thickness_border - 1 * 0.3
+    def vrata(self,i):
+        object = self.vrata_obj
+        number_of_gaps = self.number_of_doors - 1 + 2
+        length = (self.length - 2 * self.thickness_border - number_of_gaps * 0.3) / self.number_of_doors
+        height = self.height - self.plinth_height - self.thickness_border - 1 * 0.3
 
-		object.set_orientation_back()
-		object.add_chamfer(True)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        object.set_orientation_back()
+        object.add_chamfer(self.chamfer)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
 
-		z = height / 2 + self.plinth_height 
-		y = - self.width / 2 + self.thickness /2
-		x = - self.length / 2 + self.thickness_border + 0.3 + length / 2 + (length + 0.3) * i
-		object.set_position(x,y,z)
-		object.make_box(height, length, self.thickness)
+        z = height / 2 + self.plinth_height 
+        y = - self.width / 2 + self.thickness /2
+        x = - self.length / 2 + self.thickness_border + 0.3 + length / 2 + (length + 0.3) * i
+        object.set_position(x,y,z)
+        object.make_box(height, length, self.thickness)
 
-	def ledja(self):
-		object = self.ledja_obj
-		object.set_orientation_back()
-		object.add_chamfer(False)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		height = self.height - self.thickness_border
-		
-		x = 0
-		z = height / 2
-		y = self.width / 2 - self.thickness /2        
-		object.set_position(x,y,z)
-		
-		object.make_box(height, self.length - 2 * self.thickness_border, self.thickness)
+    def ledja(self):
+        object = self.ledja_obj
+        object.set_orientation_back()
+        object.add_chamfer(False)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        
+        height = self.height - self.thickness_border
+        
+        x = 0
+        z = height / 2
+        y = self.width / 2 - self.thickness /2        
+        object.set_position(x,y,z)
+        
+        object.make_box(height, self.length - 2 * self.thickness_border, self.thickness)
 
-	def plinth(self):
-		object = self.plinth_obj
-		object.set_orientation_back(True)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		object.add_chamfer(True)
-		
-		x = 0
-		z = self.plinth_height / 2
-		y = - self.width / 2 + self.thickness / 2 + 3
-		object.set_position(x,y,z)
-		
-		object.make_box(self.length - 2*self.thickness_border, self.plinth_height, self.thickness)
+    def plinth(self):
+        object = self.plinth_obj
+        object.set_orientation_back(True)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        object.add_chamfer(self.chamfer)
+        
+        x = 0
+        z = self.plinth_height / 2
+        y = - self.width / 2 + self.thickness / 2 + 3
+        object.set_position(x,y,z)
+        
+        object.make_box(self.length - 2*self.thickness_border, self.plinth_height, self.thickness)
 
-	def strop(self):
-		object = self.strop_obj
-		object.set_orientation_top()
-		object.add_chamfer(True)
-		object.length_gerung(-1,-1)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		x = 0
-		y = 0
-		z = self.height - self.thickness_border / 2
-		
-		object.set_position(x,0,z)
-		
-		object.make_box(self.length, self.width, self.thickness_border)
+    def strop(self):
+        object = self.strop_obj
+        object.set_orientation_top()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(-1,-1)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        
+        x = 0
+        y = 0
+        z = self.height - self.thickness_border / 2
+        
+        object.set_position(x,0,z)
+        
+        object.make_box(self.length, self.width, self.thickness_border)
 
-	def bocnica_ljeva(self):
-		object = self.bocnica_ljeva_obj
-		object.set_orientation_left()
-		object.add_chamfer(True)
-		object.length_gerung(-1,0)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
-		
-		x = - self.length / 2 + self.thickness_border / 2
-		y = 0
-		z = self.height / 2
-		
-		object.set_position(x,y,z)
-		
-		object.make_box(self.height, self.width, self.thickness_border)
+    def bocnica_ljeva(self):
+        object = self.bocnica_ljeva_obj
+        object.set_orientation_left()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(-1,0)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+        
+        x = - self.length / 2 + self.thickness_border / 2
+        y = 0
+        z = self.height / 2
+        
+        object.set_position(x,y,z)
+        
+        object.make_box(self.height, self.width, self.thickness_border)
 
-	def bocnica_desna(self):
-		object = self.bocnica_desna_obj
-		object.set_orientation_left()
-		object.add_chamfer(True)
-		object.length_gerung(1,0)
-		object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
+    def bocnica_desna(self):
+        object = self.bocnica_desna_obj
+        object.set_orientation_left()
+        object.add_chamfer(self.chamfer)
+        object.length_gerung(1,0)
+        object.set_mapping(self.mapping[0],self.mapping[1],self.mapping[2])
 
-		x = self.length / 2 - self.thickness_border / 2
-		y = 0
-		z = self.height / 2
+        x = self.length / 2 - self.thickness_border / 2
+        y = 0
+        z = self.height / 2
 
-		object.set_position(x,y,z)
-		object.make_box(self.height, self.width, self.thickness_border)
+        object.set_position(x,y,z)
+        object.make_box(self.height, self.width, self.thickness_border)
 
 
 class PyMaxDockWidget(QtWidgets.QDockWidget):
 
-	locker = None
-	main_layout = None
-	furniture = []
+    locker = None
+    main_layout = None
+    furniture = []
 
-	def __init__(self, parent=None, type=None):
-		super(PyMaxDockWidget, self).__init__(parent)
-		self.setWindowFlags(QtCore.Qt.Tool)
-		self.setWindowTitle("Furniture maker")
+    def __init__(self, parent=None, type=None):
+        super(PyMaxDockWidget, self).__init__(parent)
+        self.setWindowFlags(QtCore.Qt.Tool)
+        self.setWindowTitle("Furniture maker")
 
-		if type == None:
-			self.initUI()
-		else:
-			self.locker = globals()[type]()
-			self.locker_layout()
+        if type == None:
+            self.initUI()
+        else:
+            self.locker = globals()[type]()
+            self.locker_layout()
 
-		self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
+    def locker_layout(self):
+        self.main_layout = QtWidgets.QVBoxLayout()	
+        self.setWindowTitle(self.locker.getLayoutName())
 
-	def locker_layout(self):
-		self.main_layout = QtWidgets.QVBoxLayout()	
-		self.setWindowTitle(self.locker.getLayoutName())
-		
-		parameters = self.locker.get_parameters_for_layout()
-		for item in parameters:
-			label = QtWidgets.QLabel(item[2])
-			self.main_layout.addWidget(label)
-			
-			edit = QtWidgets.QLineEdit()
-			edit.setObjectName(item[0])
-			self.main_layout.addWidget(edit)
+        parameters = self.locker.get_parameters_for_layout()
+        groups = []
+        for item in parameters:
+            if [item[3], item[4]] not in groups:
+                groups.append([item[3], item[4]])
+           
+        print(groups)
+        #["test_chbox", "checkbox", "Checkbox:", "test", "Test", ""],
+        
+        for group in groups:
+            if group[0] == "main":
+                for item in parameters:
+                    if item[3] == group[0]:
+                        if item[1] == "number":
+                            label = QtWidgets.QLabel(item[2])
+                            self.main_layout.addWidget(label)
+                            
+                            edit = QtWidgets.QLineEdit()
+                            edit.setObjectName(item[0])
+                            edit.setText(str(item[5]))
+                            self.main_layout.addWidget(edit)
+                            
+                        if item[1] == "checkbox":
+                            edit = QtWidgets.QCheckBox(item[2])
+                            edit.setObjectName(item[0])
+                            edit.setChecked(item[5])
+                            self.main_layout.addWidget(edit)
+                            
+            else:
+                groupBox = QtWidgets.QGroupBox(group[1])
+                self.main_layout.addWidget(groupBox)
+                vbox = QtWidgets.QVBoxLayout()
+                for item in parameters:
+                    if item[3] == group[0]:
+                        if item[1] == "number":
+                            label = QtWidgets.QLabel(item[2])
+                            vbox.addWidget(label)
+                            
+                            edit = QtWidgets.QLineEdit()
+                            edit.setObjectName(item[0])
+                            edit.setText(str(item[5]))
+                            vbox.addWidget(edit)
+                            
+                        if item[1] == "checkbox":
+                            edit = QtWidgets.QCheckBox(item[2])
+                            edit.setObjectName(item[0])
+                            edit.setChecked(item[5])
+                            vbox.addWidget(edit)
+                            
+                groupBox.setLayout(vbox)
+
 	
-		create_btn = QtWidgets.QPushButton("Create")
-		create_btn.clicked.connect(self.create)
-		self.main_layout.addWidget(create_btn)
-		widget = QtWidgets.QWidget()
-		widget.setLayout(self.main_layout)
-		self.setWidget(widget)
-		self.resize(250, 100)
-		return
+        create_btn = QtWidgets.QPushButton("Create")
+        create_btn.clicked.connect(self.create)
+        self.main_layout.addWidget(create_btn)
+        widget = QtWidgets.QWidget()
+        widget.setLayout(self.main_layout)
+        self.setWidget(widget)
+        self.resize(125, 100)
+        return
 
-	def create(self):
-		parameters = self.locker.get_parameters_for_layout()
-		parameters_return = []
-		for item in parameters:
-			lineEdit = self.findChild(QtWidgets.QLineEdit, item[0]).text()
-			parameters_return.append([item[0], lineEdit])
-			
-		self.locker.set_parameters_from_layout(parameters_return)
-		self.locker.draw()
+    def create(self):
+        parameters = self.locker.get_parameters_for_layout()
+        parameters_return = []
+        for item in parameters:
+            if item[1] == "number":
+                lineEdit = self.findChild(QtWidgets.QLineEdit, item[0]).text()
+                parameters_return.append([item[0], lineEdit])
+            
+            if item[1] == "checkbox":
+                lineEdit = self.findChild(QtWidgets.QCheckBox, item[0]).isChecked()
+                parameters_return.append([item[0], lineEdit])
+                
+        self.locker.set_parameters_from_layout(parameters_return)
+        self.locker.draw()
+        rt.redrawViews()
 
-	def initUI(self):
-		self.main_layout = QtWidgets.QVBoxLayout()
-		label = QtWidgets.QLabel("Choose the type of furniture")
-		self.main_layout.addWidget(label)
-		
-		furniture = [
-		["furniture_type_1", "Furniture Type 1"],
-		["open_shelf", "Open Shelf"]
-		]
-		
-		for item in furniture:
-			button = QtWidgets.QPushButton(item[1])
-			button.clicked.connect(self.openFurniture)
-			button.setObjectName(item[0])
-			self.main_layout.addWidget(button)
+    def initUI(self):
+        self.main_layout = QtWidgets.QVBoxLayout()
+        label = QtWidgets.QLabel("Choose the type of furniture")
+        self.main_layout.addWidget(label)
+        
+        furniture = [
+        ["furniture_type_1", "Furniture Type 1"],
+        ["open_shelf", "Open Shelf"]
+        ]
+        
+        for item in furniture:
+            button = QtWidgets.QPushButton(item[1])
+            button.clicked.connect(self.openFurniture)
+            button.setObjectName(item[0])
+            self.main_layout.addWidget(button)
 
-		widget = QtWidgets.QWidget()
-		widget.setLayout(self.main_layout)
-		self.setWidget(widget)
-		self.resize(250, 100)
-		return
+        widget = QtWidgets.QWidget()
+        widget.setLayout(self.main_layout)
+        self.setWidget(widget)
+        self.resize(250, 100)
+        return
 		
-	def openFurniture(self):
-		sending_button = self.sender()
-		button_name = str(sending_button.objectName())
-		main_window = qtmax.GetQMaxMainWindow()
-		w = PyMaxDockWidget(parent=main_window, type=button_name)
-		w.setFloating(True)
-		w.show()
+    def openFurniture(self):
+        sending_button = self.sender()
+        button_name = str(sending_button.objectName())
+        main_window = qtmax.GetQMaxMainWindow()
+        w = PyMaxDockWidget(parent=main_window, type=button_name)
+        w.setFloating(True)
+        w.show()
 
 
 def main():
@@ -579,7 +640,7 @@ if __name__ == '__main__':
 #locker.set_thickness(3.6)
 #locker.set_plinth_height(5)
 #locker.set_number_of_doors(2)
-#locker.set_mapping(150,150,150)
+#lockesr.set_mapping(150,150,150)
 #locker.draw()
 
 #locker = open_shelf()
