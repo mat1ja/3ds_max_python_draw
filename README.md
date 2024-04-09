@@ -7,7 +7,7 @@ I also added the possibility to create furniture through a UI interface.
 
 ![User interface 1](/screenshot/ui_1.jpg)
 ![User interface 1](/screenshot/ui_2.jpg)
-![User interface 1](/screenshot/ui_3.jpg)
+![User interface 1](/screenshot/ui_4.jpg)
 
 ## Furniture type 1
 
@@ -35,3 +35,4 @@ locker.draw()
 ```
 
 ![Furniture open shelf](/screenshot/Screenshot_1.jpg)
+![Furniture open shelf](/screenshot/open_shelf_1.jpg)
